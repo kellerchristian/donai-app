@@ -1,0 +1,48 @@
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+local.properties
+
+# Build outputs
+build/
+**/build/
+
+# Android
+captures/
+.externalNativeBuild/
+.cxx/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secrets / env
+.env
+.env.*
+secrets.properties
+
+# Signing
+*.jks
+*.keystore
+
+# iOS / Xcode
+xcuserdata/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+# KMP iOS
+DerivedData/
+Pods/
+
+# Node
+node_modules/
