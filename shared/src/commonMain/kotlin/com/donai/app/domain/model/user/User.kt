@@ -23,7 +23,7 @@ data class User(
     val gdprAccepted: Boolean,
     val gdprAcceptedAt: Instant?,
 
-    val createdAt: Instant,
-    val updatedAt: Instant,
+    val createdAt: Instant?,
+    val updatedAt: Instant?,
     val deletedAt: Instant?
 )
