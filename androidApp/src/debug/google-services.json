@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "517252770168",
+    "project_id": "donai-app",
+    "storage_bucket": "donai-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517252770168:android:3edf9000a6b4696397408d",
+        "android_client_info": {
+          "package_name": "com.donai.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJfpIh_F8CI7d9dUV_iMKmFULRPOsLxOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
