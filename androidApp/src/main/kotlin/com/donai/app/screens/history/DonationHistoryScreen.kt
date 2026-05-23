@@ -1,9 +1,5 @@
 package com.donai.app.screens.history
 
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import coil3.compose.AsyncImage
-import com.donai.app.components.BottomNavDestination
-import com.donai.app.components.DonAIBottomBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,90 +22,79 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.donai.app.theme.*
 
 // ─── Model ────────────────────────────────────────────────────────────────────
 
 data class DonationRecord(
     val id: String,
-    val dateLabel: String,          // e.g. "OCT 12, 2023"
+    val dateLabel: String,
     val hospitalName: String,
-    val receiverOrNote: String,     // e.g. "Receiver: Sarah Jenkins"
-    val bloodType: String,          // e.g. "B+"
+    val receiverOrNote: String,
+    val bloodType: String,
     val isVerified: Boolean = true,
     val testimonialText: String? = null,
     val testimonialAvatarUrl: String? = null,
 )
 
 data class DonationHistoryGroup(
-    val monthYear: String,          // e.g. "OCTOBER 2023"
+    val monthYear: String,
     val records: List<DonationRecord>,
 )
 
 enum class HistoryTab { SCHEDULED, PAST_DONATIONS }
 
+/**
+ * DonationHistoryScreen content.
+ * Managed by MainScaffold in DonAINavHost.
+ */
 @Composable
 fun DonationHistoryScreen(
     uiState: DonationHistoryUiState,
     events: DonationHistoryEvents,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        topBar = {
-            HistoryTopBar(
-                onBackClick = events.onBackClick,
-                onCalendarClick = events.onCalendarClick,
-            )
-        },
-        bottomBar = {
-            DonAIBottomBar(selectedItem = BottomNavDestination.HISTORY)
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-        ) {
-            // Search bar
-            HistorySearchBar(
-                query = uiState.searchQuery,
-                onQueryChange = events.onSearchQueryChange,
-                onFilterClick = events.onFilterClick,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            )
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        // Search bar
+        HistorySearchBar(
+            query = uiState.searchQuery,
+            onQueryChange = events.onSearchQueryChange,
+            onFilterClick = events.onFilterClick,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        )
 
-            // Tabs
-            HistoryTabRow(
-                selectedTab = uiState.selectedTab,
-                onTabSelected = events.onTabSelected,
-            )
+        // Tabs
+        HistoryTabRow(
+            selectedTab = uiState.selectedTab,
+            onTabSelected = events.onTabSelected,
+        )
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
 
-            // Content
-            when {
-                uiState.isLoading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = DonAIRed)
-                    }
+        // Content
+        when {
+            uiState.isLoading -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = DonAIRed)
                 }
-                uiState.groups.isEmpty() -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "No donations found",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
-                        )
-                    }
-                }
-                else -> {
-                    DonationGroupList(
-                        groups = uiState.groups,
-                        onRecordClick = events.onRecordClick,
+            }
+            uiState.groups.isEmpty() -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "No donations found",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
                     )
                 }
+            }
+            else -> {
+                DonationGroupList(
+                    groups = uiState.groups,
+                    onRecordClick = events.onRecordClick,
+                )
             }
         }
     }
@@ -118,8 +104,8 @@ fun DonationHistoryScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HistoryTopBar(
-    onBackClick: () -> Unit,
+fun HistoryTopBar(
+    //onBackClick: () -> Unit,
     onCalendarClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -131,11 +117,11 @@ private fun HistoryTopBar(
                 fontWeight = FontWeight.Bold,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-        },
+//        navigationIcon = {
+//            IconButton(onClick = onBackClick) {
+//                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+//            }
+//        },
         actions = {
             IconButton(onClick = onCalendarClick) {
                 Icon(Icons.Outlined.CalendarMonth, contentDescription = "Calendar")
@@ -269,7 +255,6 @@ private fun DonationGroupList(
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
         groups.forEach { group ->
-            // Month-year header
             item(key = "header_${group.monthYear}") {
                 Text(
                     text = group.monthYear,
@@ -283,7 +268,6 @@ private fun DonationGroupList(
                     ),
                 )
             }
-            // Records
             items(group.records, key = { it.id }) { record ->
                 DonationRecordItem(
                     record = record,
@@ -304,7 +288,6 @@ private fun DonationRecordItem(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        // Date
         Text(
             text = record.dateLabel,
             style = MaterialTheme.typography.labelSmall,
@@ -313,7 +296,6 @@ private fun DonationRecordItem(
             modifier = Modifier.padding(bottom = 4.dp),
         )
 
-        // Main row: hospital + blood type + verified badge
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -343,7 +325,6 @@ private fun DonationRecordItem(
             }
         }
 
-        // Testimonial (optional)
         record.testimonialText?.let { text ->
             Spacer(Modifier.height(8.dp))
             TestimonialNote(
@@ -412,7 +393,6 @@ private fun TestimonialNote(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        // Small avatar thumbnail
         Box(
             modifier = Modifier
                 .size(32.dp)

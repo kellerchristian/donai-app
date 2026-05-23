@@ -23,8 +23,11 @@ data class BloodRequest(
 
 enum class RequestUrgency { URGENT, HIGH, MEDIUM, LOW }
 
-// ─── Root screen ────────────────────────────────────────────────────────────
-
+/**
+ * HomeContent renders the main dashboard.
+ * It does NOT contain a Scaffold; it relies on the caller (MainScaffold) to provide
+ * the layout shell and padding.
+ */
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -33,94 +36,32 @@ fun HomeScreen(
     onRequestClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        topBar = {
-            DonAITopBar(
-                hasUnreadNotifications = uiState.hasUnreadNotifications,
-                onNotificationClick = onNotificationClick,
-            )
-        },
-        bottomBar = { DonAIBottomBar() },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            Spacer(Modifier.height(8.dp))
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        Spacer(Modifier.height(8.dp))
 
-            DonorProfileCard(
-                isEligible = uiState.isEligible,
-                lastDonationDaysAgo = uiState.lastDonationDaysAgo,
-                avatarUrl = uiState.avatarUrl,
-            )
-
-            HealthEligibilityCard(
-                readinessPercent = uiState.healthReadinessPercent,
-                nextMilestone = uiState.nextMilestone,
-            )
-
-            ActiveRequestsSection(
-                requests = uiState.activeRequests,
-                onSeeAllClick = onSeeAllRequestsClick,
-                onRequestClick = onRequestClick,
-            )
-
-            Spacer(Modifier.height(8.dp))
-        }
-    }
-}
-
-// ─── Preview ────────────────────────────────────────────────────────────────
-
-private val previewState = HomeUiState(
-    activeRequests = listOf(
-        BloodRequest(
-            id = "1",
-            requesterName = "Sarah Williams",
-            hospital = "St. Mary's General Hospital",
-            distanceMiles = 0.8,
-            bloodType = "O+",
-            urgency = RequestUrgency.URGENT,
-        ),
-        BloodRequest(
-            id = "2",
-            requesterName = "David Chen",
-            hospital = "City Medical Center",
-            distanceMiles = 2.4,
-            bloodType = "A-",
-            urgency = RequestUrgency.HIGH,
-        ),
-    ),
-)
-
-@Preview(showBackground = true, name = "Light")
-@Composable
-private fun HomeScreenLightPreview() {
-    DonAITheme(darkTheme = false) {
-        HomeScreen(
-            uiState = previewState,
-            onNotificationClick = {},
-            onSeeAllRequestsClick = {},
-            onRequestClick = {},
+        DonorProfileCard(
+            isEligible = uiState.isEligible,
+            lastDonationDaysAgo = uiState.lastDonationDaysAgo,
+            avatarUrl = uiState.avatarUrl,
         )
-    }
-}
 
-@Preview(showBackground = true, name = "Dark")
-@Composable
-private fun HomeScreenDarkPreview() {
-    DonAITheme(darkTheme = true) {
-        HomeScreen(
-            uiState = previewState,
-            onNotificationClick = {},
-            onSeeAllRequestsClick = {},
-            onRequestClick = {},
+        HealthEligibilityCard(
+            readinessPercent = uiState.healthReadinessPercent,
+            nextMilestone = uiState.nextMilestone,
         )
+
+        ActiveRequestsSection(
+            requests = uiState.activeRequests,
+            onSeeAllClick = onSeeAllRequestsClick,
+            onRequestClick = onRequestClick,
+        )
+
+        Spacer(Modifier.height(8.dp))
     }
 }

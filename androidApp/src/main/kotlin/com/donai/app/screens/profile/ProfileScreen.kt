@@ -24,8 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.donai.app.components.BottomNavDestination
-import com.donai.app.components.DonAIBottomBar
 import com.donai.app.theme.*
 
 // ─── Model ────────────────────────────────────────────────────────────────────
@@ -40,55 +38,44 @@ data class ProfileInfo(
 
 enum class ProfileField { FULL_NAME, EMAIL, BLOOD_TYPE, LOCATION }
 
-// ─── Root Screen ──────────────────────────────────────────────────────────────
+// ─── Root Content ─────────────────────────────────────────────────────────────
 
+/**
+ * ProfileScreen content.
+ * Managed by MainScaffold in DonAINavHost.
+ */
 @Composable
 fun ProfileScreen(
     uiState: ProfileUiState,
     events: ProfileEvents,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        topBar = {
-            ProfileTopBar(
-                onBackClick = events.onBackClick,
-                onSettingsClick = events.onSettingsClick,
-            )
-        },
-        bottomBar = {
-            DonAIBottomBar(selectedItem = BottomNavDestination.PROFILE)
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            ProfileAvatarSection(
-                profile = uiState.profile,
-                onEditAvatarClick = events.onEditAvatarClick,
-            )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        ProfileAvatarSection(
+            profile = uiState.profile,
+            onEditAvatarClick = events.onEditAvatarClick,
+        )
 
-            EditProfileButton(onClick = events.onEditProfileClick)
+        EditProfileButton(onClick = events.onEditProfileClick)
 
-            AccountInfoCard(
-                profile = uiState.profile,
-                onEditFieldClick = events.onEditFieldClick,
-            )
+        AccountInfoCard(
+            profile = uiState.profile,
+            onEditFieldClick = events.onEditFieldClick,
+        )
 
-            LogoutButton(
-                isLoading = uiState.isLoggingOut,
-                onClick = events.onLogoutClick,
-            )
+        LogoutButton(
+            isLoading = uiState.isLoggingOut,
+            onClick = events.onLogoutClick,
+        )
 
-            Spacer(Modifier.height(8.dp))
-        }
+        Spacer(Modifier.height(8.dp))
     }
 }
 
@@ -96,8 +83,8 @@ fun ProfileScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProfileTopBar(
-    onBackClick: () -> Unit,
+fun ProfileTopBar(
+    //onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -109,11 +96,11 @@ private fun ProfileTopBar(
                 fontWeight = FontWeight.Bold,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-        },
+//        navigationIcon = {
+//            IconButton(onClick = onBackClick) {
+//                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+//            }
+//        },
         actions = {
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Outlined.Settings, contentDescription = "Settings")

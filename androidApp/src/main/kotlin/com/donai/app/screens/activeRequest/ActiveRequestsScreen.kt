@@ -25,86 +25,63 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.donai.app.components.DonAIBottomBar
 import com.donai.app.screens.dashboard.BloodRequest
 import com.donai.app.screens.dashboard.RequestUrgency
 import com.donai.app.theme.*
 
 // ─── Model extensions ────────────────────────────────────────────────────────
 
-/**
- * Extends [com.donai.app.screens.dashboard.BloodRequest] with data exclusive to the list view:
- * a hero image URL and the distance in km (the home screen used miles).
- */
 data class ActiveBloodRequest(
-    val request: BloodRequest,          // reuse shared model — no duplication
+    val request: BloodRequest,
     val imageUrl: String?,
     val distanceKm: Double,
 )
 
 enum class RequestTab { URGENT, NEARBY, SCHEDULED, ALL }
 
-// ─── UI State ────────────────────────────────────────────────────────────────
+// ─── UI State (Moved to shared normally, but kept here for reference if local)
 
+// ─── Root Screen Content ─────────────────────────────────────────────────────
 
-
-// ─── Root Screen ─────────────────────────────────────────────────────────────
-
+/**
+ * ActiveRequestsScreen content.
+ * Does NOT contain a Scaffold; managed by MainScaffold in NavHost.
+ */
 @Composable
 fun ActiveRequestsScreen(
     uiState: ActiveRequestsUiState,
-    onBackClick: () -> Unit,
-    onSearchClick: () -> Unit,
     onTabSelected: (RequestTab) -> Unit,
     onDonateClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
 
-    Scaffold(
-        topBar = {
-            ActiveRequestsTopBar(
-                onBackClick = onBackClick,
-                onSearchClick = onSearchClick,
-            )
-        },
-        bottomBar = {
-            DonAIBottomBar(
-                selectedItem = com.donai.app.components.BottomNavDestination.REQUESTS,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-        ) {
-            RequestTabRow(
-                selectedTab = uiState.selectedTab,
-                onTabSelected = onTabSelected,
-            )
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        RequestTabRow(
+            selectedTab = uiState.selectedTab,
+            onTabSelected = onTabSelected,
+        )
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
 
-            RequestList(
-                requests = uiState.requests,
-                isLoading = uiState.isLoading,
-                onDonateClick = onDonateClick,
-                listState = listState,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
+        RequestList(
+            requests = uiState.requests,
+            isLoading = uiState.isLoading,
+            onDonateClick = onDonateClick,
+            listState = listState,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 
-// ─── Top App Bar ─────────────────────────────────────────────────────────────
+// ─── Top App Bar (Accessible for DonAINavHost) ───────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ActiveRequestsTopBar(
-    onBackClick: () -> Unit,
+fun ActiveRequestsTopBar(
+    //onBackClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -117,15 +94,15 @@ private fun ActiveRequestsTopBar(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        },
+//        navigationIcon = {
+//            IconButton(onClick = onBackClick) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                    contentDescription = "Back",
+//                    tint = MaterialTheme.colorScheme.onSurface,
+//                )
+//            }
+//        },
         actions = {
             IconButton(onClick = onSearchClick) {
                 Icon(
@@ -142,7 +119,7 @@ private fun ActiveRequestsTopBar(
     )
 }
 
-// ─── Tab Row ─────────────────────────────────────────────────────────────────
+// ─── Internal Components ─────────────────────────────────────────────────────
 
 private val ALL_TABS = RequestTab.entries
 
@@ -194,8 +171,6 @@ private val RequestTab.displayName: String
         RequestTab.ALL       -> "All"
     }
 
-// ─── Request List ─────────────────────────────────────────────────────────────
-
 @Composable
 private fun RequestList(
     requests: List<ActiveBloodRequest>,
@@ -241,8 +216,6 @@ private fun RequestList(
     }
 }
 
-// ─── Request Card ─────────────────────────────────────────────────────────────
-
 @Composable
 fun ActiveRequestCard(
     activeRequest: ActiveBloodRequest,
@@ -252,7 +225,6 @@ fun ActiveRequestCard(
     val request = activeRequest.request
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Header row: name + blood type badge
         RequestCardHeader(
             name = request.requesterName,
             hospital = request.hospital,
@@ -261,7 +233,6 @@ fun ActiveRequestCard(
 
         Spacer(Modifier.height(10.dp))
 
-        // Hero image
         RequestHeroImage(
             imageUrl = activeRequest.imageUrl,
             contentDescription = "${request.requesterName} at ${request.hospital}",
@@ -269,7 +240,6 @@ fun ActiveRequestCard(
 
         Spacer(Modifier.height(10.dp))
 
-        // Footer: distance + donate button
         RequestCardFooter(
             distanceKm = activeRequest.distanceKm,
             onDonateClick = onDonateClick,
@@ -330,10 +300,6 @@ private fun RequestCardHeader(
     }
 }
 
-/**
- * Pill-shaped blood type badge — distinct from the square [BloodTypeChip]
- * used in the compact list item of HomeScreen.
- */
 @Composable
 private fun BloodTypePill(
     bloodType: String,
@@ -377,7 +343,6 @@ private fun RequestHeroImage(
                 modifier = Modifier.fillMaxSize(),
             )
         } else {
-            // Skeleton placeholder
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -436,75 +401,6 @@ private fun DonateButton(
             text = "Donate",
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-        )
-    }
-}
-
-// ─── Preview ─────────────────────────────────────────────────────────────────
-
-private val previewRequests = listOf(
-    ActiveBloodRequest(
-        request = BloodRequest(
-            id = "1",
-            requesterName = "Sarah Johnson",
-            hospital = "City General Hospital",
-            distanceMiles = 1.5,
-            bloodType = "O-",
-            urgency = RequestUrgency.URGENT,
-        ),
-        imageUrl = null,
-        distanceKm = 2.4,
-    ),
-    ActiveBloodRequest(
-        request = BloodRequest(
-            id = "2",
-            requesterName = "Robert Chen",
-            hospital = "St. Mary's Medical Center",
-            distanceMiles = 3.2,
-            bloodType = "A+",
-            urgency = RequestUrgency.HIGH,
-        ),
-        imageUrl = null,
-        distanceKm = 5.1,
-    ),
-    ActiveBloodRequest(
-        request = BloodRequest(
-            id = "3",
-            requesterName = "Elena Rodriguez",
-            hospital = "Regional Blood Bank",
-            distanceMiles = 4.0,
-            bloodType = "B-",
-            urgency = RequestUrgency.MEDIUM,
-        ),
-        imageUrl = null,
-        distanceKm = 6.8,
-    ),
-)
-
-@Preview(showBackground = true, name = "Light")
-@Composable
-private fun ActiveRequestsLightPreview() {
-    DonAITheme(darkTheme = false) {
-        ActiveRequestsScreen(
-            uiState = ActiveRequestsUiState(requests = previewRequests),
-            onBackClick = {},
-            onSearchClick = {},
-            onTabSelected = {},
-            onDonateClick = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Dark")
-@Composable
-private fun ActiveRequestsDarkPreview() {
-    DonAITheme(darkTheme = true) {
-        ActiveRequestsScreen(
-            uiState = ActiveRequestsUiState(requests = previewRequests),
-            onBackClick = {},
-            onSearchClick = {},
-            onTabSelected = {},
-            onDonateClick = {},
         )
     }
 }

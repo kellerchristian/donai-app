@@ -15,33 +15,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.donai.app.components.BottomNavDestination
-import com.donai.app.components.DonAIBottomBar
 import com.donai.app.theme.*
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 
 // ─── Model ───────────────────────────────────────────────────────────────────
 
-/**
- * All blood types supported by the app.
- * Kept here so the dropdown and any validator share the same source of truth.
- */
 enum class BloodType(val label: String) {
     A_POS("A+"), A_NEG("A-"),
     B_POS("B+"), B_NEG("B-"),
@@ -49,63 +38,57 @@ enum class BloodType(val label: String) {
     O_POS("O+"), O_NEG("O-"),
 }
 
+/**
+ * CreateRequestScreen content.
+ * Managed by MainScaffold in DonAINavHost.
+ */
 @Composable
 fun CreateRequestScreen(
     uiState: CreateRequestUiState,
     events: CreateRequestEvents,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        topBar = { CreateRequestTopBar(onBackClick = events.onBackClick) },
-        bottomBar = {
-            DonAIBottomBar(selectedItem = BottomNavDestination.CREATE)
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            ReceiverNameField(
-                value = uiState.receiverName,
-                error = uiState.receiverNameError,
-                onValueChange = events.onReceiverNameChange,
-            )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        ReceiverNameField(
+            value = uiState.receiverName,
+            error = uiState.receiverNameError,
+            onValueChange = events.onReceiverNameChange,
+        )
 
-            HospitalField(
-                value = uiState.hospital,
-                error = uiState.hospitalError,
-                onValueChange = events.onHospitalChange,
-            )
+        HospitalField(
+            value = uiState.hospital,
+            error = uiState.hospitalError,
+            onValueChange = events.onHospitalChange,
+        )
 
-            BloodTypeAndDonorsRow(
-                selectedBloodType = uiState.selectedBloodType,
-                bloodTypeError = uiState.bloodTypeError,
-                donorsNeeded = uiState.donorsNeeded,
-                onBloodTypeSelected = events.onBloodTypeSelected,
-                onIncrement = events.onDonorsIncrement,
-                onDecrement = events.onDonorsDecrement,
-            )
+        BloodTypeAndDonorsRow(
+            selectedBloodType = uiState.selectedBloodType,
+            bloodTypeError = uiState.bloodTypeError,
+            donorsNeeded = uiState.donorsNeeded,
+            onBloodTypeSelected = events.onBloodTypeSelected,
+            onIncrement = events.onDonorsIncrement,
+            onDecrement = events.onDonorsDecrement,
+        )
 
-            UrgentRequestToggle(
-                isUrgent = uiState.isUrgent,
-                onToggle = events.onUrgentToggle,
-            )
+        UrgentRequestToggle(
+            isUrgent = uiState.isUrgent,
+            onToggle = events.onUrgentToggle,
+        )
 
-            Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(4.dp))
 
-            SubmitSection(
-                isSubmitting = uiState.isSubmitting,
-                canSubmit = uiState.canSubmit,
-                onSubmit = events.onSubmit,
-                onPrivacyPolicyClick = events.onPrivacyPolicyClick,
-            )
-        }
+        SubmitSection(
+            isSubmitting = uiState.isSubmitting,
+            canSubmit = uiState.canSubmit,
+            onSubmit = events.onSubmit,
+            onPrivacyPolicyClick = events.onPrivacyPolicyClick,
+        )
     }
 }
 
@@ -113,8 +96,8 @@ fun CreateRequestScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CreateRequestTopBar(
-    onBackClick: () -> Unit,
+fun CreateRequestTopBar(
+    //onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -126,15 +109,15 @@ private fun CreateRequestTopBar(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = DonAIRed,
-                )
-            }
-        },
+//        navigationIcon = {
+//            IconButton(onClick = onBackClick) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                    contentDescription = "Back",
+//                    tint = DonAIRed,
+//                )
+//            }
+//        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -178,7 +161,7 @@ private fun HospitalField(
             value = value,
             onValueChange = onValueChange,
             placeholder = "Enter hospital name",
-            leadingIcon = Icons.Outlined.Search,//LocalHospital,
+            leadingIcon = Icons.Outlined.Search,
             leadingIconDescription = "Hospital",
             error = error,
             keyboardOptions = KeyboardOptions(
@@ -187,8 +170,6 @@ private fun HospitalField(
         )
     }
 }
-
-// ─── Blood type + Donors row ──────────────────────────────────────────────────
 
 @Composable
 private fun BloodTypeAndDonorsRow(
@@ -229,8 +210,6 @@ private fun BloodTypeAndDonorsRow(
     }
 }
 
-// ─── Blood Type Dropdown ──────────────────────────────────────────────────────
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BloodTypeDropdown(
@@ -264,7 +243,7 @@ private fun BloodTypeDropdown(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Add,//Bloodtype,
+                    imageVector = Icons.Outlined.Add,
                     contentDescription = null,
                     tint = DonAIRed,
                     modifier = Modifier.size(18.dp),
@@ -326,8 +305,6 @@ private fun BloodTypeDropdown(
     }
 }
 
-// ─── Donor Count Stepper ──────────────────────────────────────────────────────
-
 @Composable
 private fun DonorCountStepper(
     count: Int,
@@ -353,7 +330,7 @@ private fun DonorCountStepper(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             StepperButton(
-                icon = Icons.Filled.Clear,//.Remove,
+                icon = Icons.Filled.Clear,
                 contentDescription = "Decrease donors",
                 enabled = count > 1,
                 onClick = onDecrement,
@@ -401,8 +378,6 @@ private fun StepperButton(
     }
 }
 
-// ─── Urgent Request Toggle ────────────────────────────────────────────────────
-
 @Composable
 private fun UrgentRequestToggle(
     isUrgent: Boolean,
@@ -429,7 +404,6 @@ private fun UrgentRequestToggle(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // Red exclamation icon
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -437,7 +411,7 @@ private fun UrgentRequestToggle(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Warning,//.PriorityHigh,
+                    imageVector = Icons.Filled.Warning,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(22.dp),
@@ -472,8 +446,6 @@ private fun UrgentRequestToggle(
         }
     }
 }
-
-// ─── Submit Section ───────────────────────────────────────────────────────────
 
 @Composable
 private fun SubmitSection(
@@ -536,8 +508,6 @@ private fun PrivacyPolicyNote(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
         textAlign = TextAlign.Center,
     )
-    // Using AnnotatedString to make the policy link tappable inline.
-    // SpanStyle highlight for the clickable part.
     ClickableText(
         text = buildAnnotatedString {
             append("By submitting this request, you agree to DonAI's medical data ")
@@ -552,20 +522,11 @@ private fun PrivacyPolicyNote(
             append(".")
         },
         style = baseStyle,
-        onClick = { offset ->
-            // Only fire when tapping the annotated segment
-            onPrivacyPolicyClick()
-        },
+        onClick = { onPrivacyPolicyClick() },
         modifier = modifier.padding(horizontal = 8.dp),
     )
 }
 
-// ─── Shared labeled form field wrapper ───────────────────────────────────────
-
-/**
- * Reusable layout: CAPS label above any [content] composable.
- * Keeps label styling consistent across all form fields.
- */
 @Composable
 private fun LabeledFormField(
     label: String,
@@ -587,12 +548,6 @@ private fun LabeledFormField(
     }
 }
 
-// ─── Shared outlined text field ───────────────────────────────────────────────
-
-/**
- * App-wide styled text field. Keeps border radius, colors,
- * and leading icon treatment consistent across the whole form.
- */
 @Composable
 private fun DonAIOutlinedTextField(
     value: String,
@@ -649,75 +604,23 @@ private fun DonAIOutlinedTextField(
 
 // ─── Previews ─────────────────────────────────────────────────────────────────
 
-private val previewEvents = CreateRequestEvents(
-    onBackClick = {},
-    onReceiverNameChange = {},
-    onHospitalChange = {},
-    onBloodTypeSelected = {},
-    onDonorsIncrement = {},
-    onDonorsDecrement = {},
-    onUrgentToggle = {},
-    onSubmit = {},
-    onPrivacyPolicyClick = {},
-)
-
 @Preview(showBackground = true, name = "Light — empty form")
 @Composable
 private fun CreateRequestLightEmptyPreview() {
     DonAITheme(darkTheme = false) {
         CreateRequestScreen(
             uiState = CreateRequestUiState(),
-            events = previewEvents,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Light — filled + urgent")
-@Composable
-private fun CreateRequestLightFilledPreview() {
-    DonAITheme(darkTheme = false) {
-        CreateRequestScreen(
-            uiState = CreateRequestUiState(
-                receiverName = "Johnathan Doe",
-                hospital = "City General Hospital",
-                selectedBloodType = BloodType.O_NEG,
-                donorsNeeded = 3,
-                isUrgent = true,
-                canSubmit = true,
+            events = CreateRequestEvents(
+                onBackClick = {},
+                onReceiverNameChange = {},
+                onHospitalChange = {},
+                onBloodTypeSelected = {},
+                onDonorsIncrement = {},
+                onDonorsDecrement = {},
+                onUrgentToggle = {},
+                onSubmit = {},
+                onPrivacyPolicyClick = {},
             ),
-            events = previewEvents,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Dark — filled + urgent")
-@Composable
-private fun CreateRequestDarkPreview() {
-    DonAITheme(darkTheme = true) {
-        CreateRequestScreen(
-            uiState = CreateRequestUiState(
-                receiverName = "Johnathan Doe",
-                hospital = "City General Hospital",
-                selectedBloodType = BloodType.O_NEG,
-                donorsNeeded = 2,
-                isUrgent = true,
-                canSubmit = true,
-            ),
-            events = previewEvents,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Light — validation errors")
-@Composable
-private fun CreateRequestValidationPreview() {
-    DonAITheme(darkTheme = false) {
-        CreateRequestScreen(
-            uiState = CreateRequestUiState(
-                receiverNameError = "Name is required",
-                bloodTypeError = "Please select a blood type",
-            ),
-            events = previewEvents,
         )
     }
 }
